@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">ListView need a ListAapter. We can use:\n\tArrayAdapter, \n\tSimpleCursorAdapter, \n\tSimpleAdapter(BaseAdapter)</string>
+    <string name="app_name">ListViewTest</string>
+
+</resources>
