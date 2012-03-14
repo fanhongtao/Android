@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, ActiveGroupTestActivity!</string>
+    <string name="app_name">ActiveGroupTest</string>
+    <string name="test1">Test1</string>
+    <string name="view1">View1</string>
+    <string name="view2">View2</string>
+
+</resources>
