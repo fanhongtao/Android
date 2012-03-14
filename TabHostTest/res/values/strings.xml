@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, TabHostTestActivity!</string>
+    <string name="app_name">TabHostTest</string>
+    <string name="view1">View1</string>
+    <string name="view2">View2</string>
+
+</resources>
