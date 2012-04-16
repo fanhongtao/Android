@@ -3,6 +3,7 @@
  */
 package org.fanhongtao.listview;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -14,16 +15,14 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -35,6 +34,9 @@ import android.widget.TextView;
  */
 public class ListView4 extends BaseActivity {
 
+    @SuppressWarnings("rawtypes")
+    private static final Class[] INT_CLASS = { int.class };
+    
     private ListView listView;
     
     private List<Map<String, Object>> data;
@@ -44,7 +46,7 @@ public class ListView4 extends BaseActivity {
         TAG = "ListView4";
         super.onCreate(savedInstanceState);
         listView = new ListView(this);
-        data = ListView3.getData();
+        data = ListView3.getData(20);
         ColorListAdapter adapter = new ColorListAdapter();
         listView.setAdapter(adapter);
         
@@ -136,35 +138,41 @@ public class ListView4 extends BaseActivity {
     }
     
     private OnScrollListener scrollListener = new OnScrollListener() {
-
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
             if (scrollState == SCROLL_STATE_FLING) {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        int oldFirstPos = listView.getFirstVisiblePosition();
-                        while (true) {
+                        Log.i(TAG, "Start a watch thread.");
+                        
+                        // detect the end of fling
+                        int currFirstPos = listView.getFirstVisiblePosition();
+                        int oldFirstPos;
+                        do {
+                            oldFirstPos = currFirstPos;
                             try {
                                 Thread.sleep(200);
                             } catch (InterruptedException e) {
                                 continue; // sleep is interrupted, just try again.
                             }
-                            int currFirstPos = listView.getFirstVisiblePosition();
-                            if (currFirstPos != oldFirstPos) {
-                                continue; // still scrolling, check again
-                            }
-
-                            listView.getHandler().post(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    long time = SystemClock.uptimeMillis();
-                                    MotionEvent event = MotionEvent.obtain(time, time, MotionEvent.ACTION_UP, 0, 0, 0);
-                                    listView.onTouchEvent(event);
+                            currFirstPos = listView.getFirstVisiblePosition();
+                        } while (currFirstPos != oldFirstPos);
+                        
+                        // Set scroll state to IDLE
+                        listView.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Log.i(TAG, "Set scroll state to IDLE");
+                                    Method method = AbsListView.class.getDeclaredMethod("reportScrollStateChange", INT_CLASS);
+                                    method.setAccessible(true);
+                                    method.invoke(listView, SCROLL_STATE_IDLE);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
                 };
                 new Thread(runnable).start();

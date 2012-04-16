@@ -27,37 +27,40 @@ public class ListView3 extends BaseActivity {
         TAG = "ListView3";
         super.onCreate(savedInstanceState);
         listView = new ListView(this);
-        listView.setAdapter(new SimpleAdapter(this, getData(), R.layout.list_item_3, new String[] { "image", "name" },
+        listView.setAdapter(new SimpleAdapter(this, getData(1), R.layout.list_item_3, new String[] { "image", "name" },
                 new int[] { R.id.imageView1, R.id.textView1 }));
         setContentView(listView);
     }
 
-    protected static List<Map<String, Object>> getData() {
+    protected static List<Map<String, Object>> getData(int count) {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", "blue");
-        map.put("image", R.drawable.color_blue);
-        list.add(map);
-        
-        map = new HashMap<String, Object>();
-        map.put("name", "red");
-        map.put("image", R.drawable.color_red);
-        list.add(map);
-        
-        map = new HashMap<String, Object>();
-        map.put("name", "green");
-        map.put("image", R.drawable.color_green);
-        list.add(map);
-        
-        map = new HashMap<String, Object>();
-        map.put("name", "yellow");
-        map.put("image", R.drawable.color_yellow);
-        list.add(map);
-        
-        map = new HashMap<String, Object>();
-        map.put("name", "white");
-        map.put("image", R.drawable.color_white);
-        list.add(map);
+        Map<String, Object> map;
+        for (int i = 0; i < count; i++) {
+            map = new HashMap<String, Object>();
+            map.put("name", "blue-" + i);
+            map.put("image", R.drawable.color_blue);
+            list.add(map);
+            
+            map = new HashMap<String, Object>();
+            map.put("name", "red-" + i);
+            map.put("image", R.drawable.color_red);
+            list.add(map);
+            
+            map = new HashMap<String, Object>();
+            map.put("name", "green-" + i);
+            map.put("image", R.drawable.color_green);
+            list.add(map);
+            
+            map = new HashMap<String, Object>();
+            map.put("name", "yellow-" + i);
+            map.put("image", R.drawable.color_yellow);
+            list.add(map);
+            
+            map = new HashMap<String, Object>();
+            map.put("name", "white-" + i);
+            map.put("image", R.drawable.color_white);
+            list.add(map);
+        }
         return list;
     }
 }
