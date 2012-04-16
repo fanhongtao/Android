@@ -138,49 +138,67 @@ public class ListView4 extends BaseActivity {
     }
     
     private OnScrollListener scrollListener = new OnScrollListener() {
+        // Whether we have started a watcher thread.
+        private Boolean threadStarted = false;
+        
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
             if (scrollState == SCROLL_STATE_FLING) {
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "Start a watch thread.");
-                        
-                        // detect the end of fling
-                        int currFirstPos = listView.getFirstVisiblePosition();
-                        int oldFirstPos;
-                        do {
-                            oldFirstPos = currFirstPos;
-                            try {
-                                Thread.sleep(200);
-                            } catch (InterruptedException e) {
-                                continue; // sleep is interrupted, just try again.
-                            }
-                            currFirstPos = listView.getFirstVisiblePosition();
-                        } while (currFirstPos != oldFirstPos);
-                        
-                        // Set scroll state to IDLE
-                        listView.getHandler().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Log.i(TAG, "Set scroll state to IDLE");
-                                    Method method = AbsListView.class.getDeclaredMethod("reportScrollStateChange", INT_CLASS);
-                                    method.setAccessible(true);
-                                    method.invoke(listView, SCROLL_STATE_IDLE);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
+                synchronized (threadStarted) {
+                    if (!threadStarted) {
+                        threadStarted = true;
+                        new Thread(getWatcherRunnable()).start();
+                    } else {
+                        Log.i(TAG, "Watcher thread already exist.");
                     }
-                };
-                new Thread(runnable).start();
+                }
             }
         }
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        }
+        
+        private Runnable getWatcherRunnable() {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "Start a watcher thread.");
+                    
+                    // detect the end of fling
+                    int currFirstPos = listView.getFirstVisiblePosition();
+                    int oldFirstPos;
+                    do {
+                        oldFirstPos = currFirstPos;
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            continue; // sleep is interrupted, just try again.
+                        }
+                        currFirstPos = listView.getFirstVisiblePosition();
+                    } while (currFirstPos != oldFirstPos);
+                    
+                    // Set scroll state to IDLE
+                    listView.getHandler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Log.i(TAG, "Set scroll state to IDLE");
+                                Method method = AbsListView.class.getDeclaredMethod("reportScrollStateChange", INT_CLASS);
+                                method.setAccessible(true);
+                                method.invoke(listView, SCROLL_STATE_IDLE);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Failed to change scroll state", e);
+                            }
+                        }
+                    });
+                    
+                    synchronized (threadStarted) {
+                        threadStarted = false;
+                    }
+                }
+            };
+            return runnable;
         }
     };
 }
