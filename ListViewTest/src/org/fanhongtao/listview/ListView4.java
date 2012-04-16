@@ -14,12 +14,16 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -63,6 +67,8 @@ public class ListView4 extends BaseActivity {
                 builder.show();
             }
         });
+        
+        listView.setOnScrollListener(scrollListener);
         setContentView(listView);
     }
 
@@ -128,4 +134,45 @@ public class ListView4 extends BaseActivity {
         public ImageView image;
         public TextView  name;
     }
+    
+    private OnScrollListener scrollListener = new OnScrollListener() {
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            if (scrollState == SCROLL_STATE_FLING) {
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        int oldFirstPos = listView.getFirstVisiblePosition();
+                        while (true) {
+                            try {
+                                Thread.sleep(200);
+                            } catch (InterruptedException e) {
+                                continue; // sleep is interrupted, just try again.
+                            }
+                            int currFirstPos = listView.getFirstVisiblePosition();
+                            if (currFirstPos != oldFirstPos) {
+                                continue; // still scrolling, check again
+                            }
+
+                            listView.getHandler().post(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    long time = SystemClock.uptimeMillis();
+                                    MotionEvent event = MotionEvent.obtain(time, time, MotionEvent.ACTION_UP, 0, 0, 0);
+                                    listView.onTouchEvent(event);
+                                }
+                            });
+                        }
+                    }
+                };
+                new Thread(runnable).start();
+            }
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        }
+    };
 }
