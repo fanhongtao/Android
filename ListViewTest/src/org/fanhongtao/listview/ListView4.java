@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -138,13 +139,15 @@ public class ListView4 extends BaseActivity {
     }
     
     private OnScrollListener scrollListener = new OnScrollListener() {
+        private Object locker = new Object();
+        
         // Whether we have started a watcher thread.
-        private Boolean threadStarted = false;
+        private boolean threadStarted = false;
         
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
             if (scrollState == SCROLL_STATE_FLING) {
-                synchronized (threadStarted) {
+                synchronized (locker) {
                     if (!threadStarted) {
                         threadStarted = true;
                         new Thread(getWatcherRunnable()).start();
@@ -179,21 +182,24 @@ public class ListView4 extends BaseActivity {
                     } while (currFirstPos != oldFirstPos);
                     
                     // Set scroll state to IDLE
-                    listView.getHandler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Log.i(TAG, "Set scroll state to IDLE");
-                                Method method = AbsListView.class.getDeclaredMethod("reportScrollStateChange", INT_CLASS);
-                                method.setAccessible(true);
-                                method.invoke(listView, SCROLL_STATE_IDLE);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Failed to change scroll state", e);
+                    Handler handler = listView.getHandler();
+                    if (handler != null) { // If activity is closed while fling the list, handler will be null.
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Log.i(TAG, "Set scroll state to IDLE");
+                                    Method method = AbsListView.class.getDeclaredMethod("reportScrollStateChange", INT_CLASS);
+                                    method.setAccessible(true);
+                                    method.invoke(listView, SCROLL_STATE_IDLE);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Failed to change scroll state", e);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                     
-                    synchronized (threadStarted) {
+                    synchronized (locker) {
                         threadStarted = false;
                     }
                 }
