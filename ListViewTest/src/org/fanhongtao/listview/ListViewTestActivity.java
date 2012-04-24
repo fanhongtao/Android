@@ -3,19 +3,22 @@
  */
 package org.fanhongtao.listview;
 
+import org.fanhongtao.common.BaseTestActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 /**
  * ListView need a ListAapter. We can use ArrayAdapter, SimpleCursorAdapter, SimpleAdapter(BaseAdapter).
  * 
  * @author Fan Hongtao &ltfanhongtao@gmail.com&gt
  */
-public class ListViewTestActivity extends Activity {
+public class ListViewTestActivity extends BaseTestActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,16 +29,8 @@ public class ListViewTestActivity extends Activity {
         createButton(R.id.button3, ListView3.class);
         createButton(R.id.button4, ListView4.class);
         createButton(R.id.button5, ListView5.class);
-    }
-    
-    private void createButton(int id, final Class<?> activityClass) {
-        Button button = (Button) findViewById(id);
-        button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ListViewTestActivity.this, activityClass);
-                startActivity(intent);
-            }
-        });
+        
+        LinearLayout layout = (LinearLayout) findViewById(R.id.main_layout);
+        createButton(layout, "List6: Different list-item height", ListView6.class);
     }
 }

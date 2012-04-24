@@ -22,8 +22,9 @@
         <activity android:name="ListView1"></activity>
         <activity android:name="ListView2"></activity>
         <activity android:name="ListView3"></activity>
-        <activity android:name="ListView4"></activity><activity android:name=".ListView5"></activity>
-        
+        <activity android:name="ListView4"></activity>
+        <activity android:name=".ListView5"></activity>
+        <activity android:name=".ListView6"></activity>
     </application>
 
 </manifest>
