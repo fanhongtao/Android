@@ -33,9 +33,19 @@ public class ListView3 extends BaseActivity {
     }
 
     protected static List<Map<String, Object>> getData(int count) {
+        return getData(count, false);
+    }
+    protected static List<Map<String, Object>> getData(int count, boolean addGroupInfo) {
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Map<String, Object> map;
         for (int i = 0; i < count; i++) {
+            if (addGroupInfo) {
+                map = new HashMap<String, Object>();
+                map.put("name", "Group-" + i);
+                map.put("image", R.drawable.color_blue);
+                list.add(map);
+            }
+            
             map = new HashMap<String, Object>();
             map.put("name", "blue-" + i);
             map.put("image", R.drawable.color_blue);

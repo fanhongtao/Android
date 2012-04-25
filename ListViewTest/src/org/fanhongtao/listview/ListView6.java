@@ -37,7 +37,7 @@ private ListView listView;
         TAG = "ListView6";
         super.onCreate(savedInstanceState);
         listView = new ListView(this);
-        data = ListView3.getData(20);
+        data = ListView3.getData(20, true);
         ColorListAdapter adapter = new ColorListAdapter();
         listView.setAdapter(adapter);
         setContentView(listView);
@@ -89,11 +89,15 @@ private ListView listView;
                 holder = (ViewHolder) convertView.getTag();
             }
             
-            if (position % 7 == 1) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>)getItem(position);
+            String name = (String)map.get("name");
+            
+            if (name.startsWith("Group-")) {
                 holder.titleLayout.setVisibility(View.VISIBLE);
                 holder.contentLayout.setVisibility(View.GONE);
                 
-                holder.title.setText("Pos: " + position);
+                holder.title.setText(name);
                 return convertView;
             }
             
@@ -101,11 +105,9 @@ private ListView listView;
             holder.contentLayout.setVisibility(View.VISIBLE);
             
             // Set content
-            @SuppressWarnings("unchecked")
-            Map<String, Object> map = (Map<String, Object>)getItem(position);
             Bitmap bitmap = BitmapFactory.decodeResource(convertView.getResources(), (Integer)map.get("image"));
             holder.image.setImageBitmap(bitmap);
-            holder.name.setText((String)map.get("name"));
+            holder.name.setText(name);
             
             return convertView;
         }
