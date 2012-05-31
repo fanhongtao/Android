@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name="Flip1"></activity>
+        <activity android:name="Flip2"></activity>
     </application>
 
 </manifest>

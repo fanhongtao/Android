@@ -20,5 +20,6 @@ public class PageTruningTestActivity extends BaseTestActivity {
         ViewGroup parent = createContentView();
         createText(parent, "Demoes of Page Truning");
         createButton(parent, "ViewFlipper 1: Base use without amination", Flip1.class);
+        createButton(parent, "ViewFlipper 2: Use with amination", Flip2.class);
     }
 }
