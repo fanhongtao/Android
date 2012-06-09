@@ -28,5 +28,6 @@ public class ListViewTestActivity extends BaseTestActivity {
         LinearLayout layout = (LinearLayout) findViewById(R.id.main_layout);
         createButton(layout, "List6: Different list-item height", ListView6.class);
         createButton(layout, "List7: ListView with search-box", ListViewWithSearchBox.class);
+        createButton(layout, "List8: ReusedArrayAdapter Test", ReusedArrayAdapterTest.class);
     }
 }
