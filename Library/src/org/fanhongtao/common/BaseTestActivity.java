@@ -20,16 +20,16 @@ import android.widget.TextView;
  * @author Fan Hongtao &ltfanhongtao@gmail.com&gt
  */
 public class BaseTestActivity extends BaseActivity {
-    
+
     protected ViewGroup createContentView() {
         LinearLayout parent = new LinearLayout(this);
         parent.setOrientation(LinearLayout.VERTICAL);
-        
+
         ScrollView sv = new ScrollView(this);
         sv.addView(parent);
-        
+
         setContentView(sv);
-        
+
         return parent;
     }
 
@@ -43,13 +43,13 @@ public class BaseTestActivity extends BaseActivity {
             }
         });
     }
-    
+
     protected void createButton(ViewGroup parent, String buttonText, final Class<?> activityClass) {
         Button button = new Button(this);
         button.setText(buttonText);
         button.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         parent.addView(button);
-        
+
         button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +58,22 @@ public class BaseTestActivity extends BaseActivity {
             }
         });
     }
-    
+
+    protected void createButton(ViewGroup parent, String buttonText, final Class<?> activityClass, final int requestCode) {
+        Button button = new Button(this);
+        button.setText(buttonText);
+        button.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+        parent.addView(button);
+
+        button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BaseTestActivity.this, activityClass);
+                startActivityForResult(intent, requestCode);
+            }
+        });
+    }
+
     protected void createText(ViewGroup parent, String content) {
         TextView textView = new TextView(this);
         textView.setText(content);

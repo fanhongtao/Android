@@ -4,5 +4,8 @@
     <string name="hello">Hello World!</string>
     <string name="app_name">Library</string>
     <string name="lib_searchbox_hint">Search</string>
-
+    <string name="folder_choose_title">Choose Folder</string>
+    <string name="file_choose_title">Choose File</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose">Choose</string>
 </resources>
